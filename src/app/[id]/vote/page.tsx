@@ -53,6 +53,7 @@ export default function VotePage() {
     const [newPersonName, setNewPersonName] = useState('');
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [settings, setSettings] = useState<VotingSettings | null>(null);
+    const [isSending, setIsSending] = useState(false);
 
     const handleSettingsOpen = () => {
         setIsSettingsOpen(true);
@@ -135,6 +136,8 @@ export default function VotePage() {
 
     // 登録ボタンのハンドラ
     const handleRegister = async () => {
+        setIsSending(true);
+
         if (!newPersonName.trim()) {
             alert('名前を入力してください');
             return;
@@ -199,6 +202,8 @@ export default function VotePage() {
                     ? `エラー: ${err.message}` 
                     : '参加者の登録に失敗しました'
             );
+        } finally {
+            setIsSending(false);
         }
     };
 
@@ -239,6 +244,16 @@ export default function VotePage() {
 
     return (
         <div className="min-h-screen bg-slate-950 py-8">
+            <header className="text-center mb-8">
+                {/* <Link
+                    href="/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-6xl text-lime-400 hover:text-lime-300 transition-colors tracking-tighter"
+                >
+                    
+                </Link> */}
+            </header>
             <main className="container mx-auto px-4">
                 <div className="flex justify-between items-center mb-8">
                     <div>
@@ -249,18 +264,20 @@ export default function VotePage() {
                             イベントID: {eventData.id}
                         </p>
                     </div>
-                    <button
-                        type="button"
-                        onClick={handleSettingsOpen}
-                        className="flex items-center gap-2 px-4 py-2 bg-slate-800 border border-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <title>設定アイコン</title>
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        設定を確認
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <button
+                            type="button"
+                            onClick={handleSettingsOpen}
+                            className="flex items-center gap-2 px-4 py-2 bg-slate-800 border border-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <title>設定アイコン</title>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            設定
+                        </button>
+                    </div>
                 </div>
                 
                 {/* 左右分割レイアウト */}
@@ -291,9 +308,10 @@ export default function VotePage() {
                             <button
                                 type="button"
                                 onClick={handleRegister}
-                                className="bg-lime-400 text-slate-950 px-8 py-3 rounded-lg font-bold hover:bg-lime-300 transition-colors shadow-lg text-lg"
+                                disabled={isSending}
+                                className={`bg-lime-400 text-slate-950 px-8 py-3 rounded-lg font-bold hover:bg-lime-300 transition-colors shadow-lg text-lg ${isSending ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
-                                日程登録
+                                {isSending ? '登録中...' : '日程登録'}
                             </button>
                         </div>
                     </div>
